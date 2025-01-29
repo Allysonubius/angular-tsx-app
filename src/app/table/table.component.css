@@ -1,30 +1,43 @@
+/* Container principal */
 .container {
   margin: 20px;
 }
+
+/* Estilo para o campo de filtro */
 .filter-input {
   margin-bottom: 10px;
   padding: 5px;
   width: 100%;
   box-sizing: border-box;
 }
+
+/* Estilo da tabela */
 table {
   width: 100%;
   border-collapse: collapse;
+  position: relative;
 }
+
+/* Estilo das células de dados e cabeçalho */
 th, td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  vertical-align: middle;
 }
+
+/* Cabeçalho da tabela */
 th {
   background-color: #f4f4f4;
 }
+
+/* Estilo do spinner */
 .spinner {
   border: 4px solid #f3f3f3;
   border-top: 4px solid #3498db;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   animation: spin 2s linear infinite;
 }
 
@@ -36,12 +49,153 @@ th {
     transform: rotate(360deg);
   }
 }
+
+/* Contêiner de loading */
+.loading-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Estilo para a mensagem quando não há resultados */
+.no-results {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+/* Estilo da navegação da paginação */
 .pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 600px;
+}
+
+.pages-info {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.items-info {
+  flex: 1;
+  text-align: center;
+}
+
+.items-per-page {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.items-per-page select {
+  margin-left: 10px;
+}
+
+/* Estilo dos controles de navegação da paginação */
+.pagination-controls {
   display: flex;
   justify-content: center;
   margin-top: 10px;
 }
-.pagination button {
+
+.pagination-controls button {
   margin: 0 5px;
   padding: 5px 10px;
+}
+
+.pagination-info button {
+  padding: 5px 10px;
+  margin: 0 5px;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.pagination-info button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+/* Estilo da célula vazia para o "loading" */
+.loading-cell {
+  width: 40px; /* Adiciona a largura da coluna vazia para alinhar com o spinner */
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-left: 1px solid #ddd;  /* Borda à esquerda da célula */
+  border-right: 1px solid #ddd; /* Borda à direita da célula */
+  overflow: visible; /* Garante que o conteúdo da célula não seja ocultado */
+}
+
+/* Estilo do spinner, com borda apenas no topo */
+.loading-cell .spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto; /* Centraliza o spinner dentro da célula */
+  display: block;
+}
+
+/* Garantir que a célula de loading não afete a posição das outras colunas */
+td.loading-cell {
+  padding: 0;
+}
+
+/* Ajuste do spinner para estar no centro da célula */
+.spinner-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Desabilitando os checkboxes e outras interações na linha com o loading */
+.loading td {
+  pointer-events: none;
+}
+
+/* Estilo do checkbox nas células */
+td input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+/* Estilo geral da tabela */
+table td, table th {
+  vertical-align: middle;
+}
+
+/* Novo estilo de responsividade para a tabela */
+@media (max-width: 768px) {
+  .pagination-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pagination-controls button {
+    padding: 5px 8px;
+  }
+
+  .items-per-page select {
+    width: 80px;
+  }
 }

@@ -7,9 +7,9 @@ import { Item } from '../interface/item';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css']
 })
-export class TableComponent implements OnInit {
 
-  constructor(private dataService: DataService) { }
+export class TableComponent implements OnInit {
+  constructor(private dataService: DataService) {}
 
   items: Item[] = [];
   filter: string = '';
@@ -24,46 +24,74 @@ export class TableComponent implements OnInit {
     });
   }
 
+  // Filtra os itens com base no filtro
   filteredItems() {
-    const filtered = this.items.filter(item =>
+    return this.items.filter(item =>
       item.nome.toLowerCase().includes(this.filter.toLowerCase()) ||
       item.data.toLowerCase().includes(this.filter.toLowerCase())
     );
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return filtered.slice(start, start + this.itemsPerPage);
   }
 
-  removeItem(index: number) {
-    const actualIndex = (this.currentPage - 1) * this.itemsPerPage + index;
-    this.items[actualIndex].loading = true;
-    setTimeout(() => {
-      this.items.splice(actualIndex, 1);
-    }, 2000); // Simula remoção após 2 segundos
-  }
-
-  get totalPages() {
-    return Math.ceil(
-      this.items.filter(item =>
-        item.nome.toLowerCase().includes(this.filter.toLowerCase())
-      ).length / this.itemsPerPage
-    );
-  }
-
-  get visiblePages() {
-    const pages = [];
-    const maxPagesToShow = 5;
-    const startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
-    const endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+  // Toggle do estado de loading para o item (exibe o spinner)
+  toggleLoading(item: Item, index: number) {
+    if (item.loading) {
+      return;  // Evita que o loading seja alternado se já estiver em carregamento
     }
-    return pages;
+
+    item.loading = true;
+
+    // Simula uma ação após um tempo
+    setTimeout(() => {
+      item.loading = false;  // Finaliza o loading após 2 segundos
+      this.removeItem(index);  // Realiza a remoção do item
+    }, 2000);  // Ajuste o tempo conforme necessário
   }
 
+  // Remove um item da lista
+  removeItem(index: number) {
+    const filtered = this.filteredItems(); // Aplica o filtro antes
+    const actualIndex = (this.currentPage - 1) * this.itemsPerPage + index;
+
+    // Remove o item apenas se ele estiver visível na página atual
+    if (actualIndex < filtered.length) {
+      this.items.splice(actualIndex, 1);
+    }
+  }
+
+  // Total de páginas com base no número de itens filtrados
+  get totalPages() {
+    const filtered = this.filteredItems();  // Aplica o filtro
+    return Math.ceil(filtered.length / this.itemsPerPage);
+  }
+
+  // Páginas visíveis para navegação
+  get visiblePages() {
+    const total = this.totalPages;
+    const start = Math.max(1, this.currentPage - 2);
+    const end = Math.min(total, this.currentPage + 2);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }
+
+  // Navegar entre as páginas
   changePage(page: number) {
     if (page > 0 && page <= this.totalPages) {
       this.currentPage = page;
     }
+  }
+
+  // Exibir intervalo de itens na página atual
+  get itemsDisplayRange(): string {
+    const filtered = this.filteredItems();  // Aplica o filtro
+    const firstItemIndex = (this.currentPage - 1) * this.itemsPerPage + 1;
+    const lastItemIndex = Math.min(firstItemIndex + this.itemsPerPage - 1, filtered.length);
+    return `Exibindo ${firstItemIndex} a ${lastItemIndex} de ${filtered.length} itens`;
+  }
+
+  // Itens para exibir na página atual (com filtro e paginação)
+  get paginatedItems() {
+    const filtered = this.filteredItems();  // Aplica o filtro
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = Math.min(start + this.itemsPerPage, filtered.length);
+    return filtered.slice(start, end);
   }
 }

@@ -2,33 +2,56 @@
   <h1>Lista de Itens</h1>
   <input type="text" [(ngModel)]="filter" placeholder="Filtrar itens" class="filter-input" />
 
-  <div *ngIf="loading">Carregando...</div>
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+  </div>
 
-  <table class="table" *ngIf="!loading">
+  <table *ngIf="!loading" class="table">
     <thead>
       <tr>
         <th>Nome</th>
         <th>Data</th>
-        <th>Ação</th>
+        <!-- Coluna adicional para o "loading" -->
+        <th></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of filteredItems(); let i = index">
-        <td>{{ item.nome }}</td>
-        <td>{{ item.data }}</td>
+      <tr *ngFor="let item of paginatedItems; let i = index" [ngClass]="{'loading': item.loading}" (click)="toggleLoading(item, i)">
         <td>
-          <div *ngIf="item.loading" class="spinner"></div>
-          <input *ngIf="!item.loading" type="checkbox" (change)="removeItem(i)" />
+          <input type="checkbox" (change)="toggleLoading(item, i)" [disabled]="item.loading" />
+          {{ item.nome }}
         </td>
+        <td>{{ item.data }}</td>
+        <!-- Nova célula vazia para o loading -->
+        <td>
+          <div *ngIf="item.loading" class="spinner-overlay">
+            <div class="spinner"></div>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="paginatedItems.length === 0">
+        <td colspan="3" class="no-results">Não encontrado</td>
       </tr>
     </tbody>
   </table>
 
   <div class="pagination" *ngIf="!loading">
-    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">&#x25C0;</button>
-    <button *ngFor="let page of visiblePages" (click)="changePage(page)" [disabled]="currentPage === page">
-      {{ page }}
-    </button>
-    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">&#x25B6;</button>
+    <div class="pagination-info">
+      <div class="pages-info">
+        <button (click)="changePage(1)" [disabled]="currentPage === 1">Primeira</button>
+        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">&#x25C0;</button>
+
+        <button *ngFor="let page of visiblePages" (click)="changePage(page)" [disabled]="currentPage === page">
+          {{ page }}
+        </button>
+
+        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">&#x25B6;</button>
+        <button (click)="changePage(totalPages)" [disabled]="currentPage === totalPages">Última</button>
+      </div>
+
+      <div class="items-info">
+        {{ itemsDisplayRange }}
+      </div>
+    </div>
   </div>
 </div>
