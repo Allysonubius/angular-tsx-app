@@ -1,0 +1,34 @@
+<div class="container">
+  <h1>Lista de Itens</h1>
+  <input type="text" [(ngModel)]="filter" placeholder="Filtrar itens" class="filter-input" />
+
+  <div *ngIf="loading">Carregando...</div>
+
+  <table class="table" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Data</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of filteredItems(); let i = index">
+        <td>{{ item.nome }}</td>
+        <td>{{ item.data }}</td>
+        <td>
+          <div *ngIf="item.loading" class="spinner"></div>
+          <input *ngIf="!item.loading" type="checkbox" (change)="removeItem(i)" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination" *ngIf="!loading">
+    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">&#x25C0;</button>
+    <button *ngFor="let page of visiblePages" (click)="changePage(page)" [disabled]="currentPage === page">
+      {{ page }}
+    </button>
+    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">&#x25B6;</button>
+  </div>
+</div>
